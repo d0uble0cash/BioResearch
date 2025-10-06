@@ -15,25 +15,25 @@ while i < len(genome) - 3:
         j = i + 3
         while j < len(genome) - 3:
             stop_codon = genome[j:j+3]
-            if stop_codon in stop_codons:
-                # Found stop codon; extract ORF
-                orf = genome[i:j+3]
-                
-                # Upstream region for G-rich 5-mer check
-                upstream_12_start = max(0, i - 12)
-                upstream_region = genome[upstream_12_start:i]
 
-                # Check for 5-mer with at least 3 G's
-                g_rich_found = False
-                for k in range(len(upstream_region) - 4):  # 5-mer sliding window
-                    five_mer = upstream_region[k:k+5]
-                    if five_mer.count("G") >= 3:
-                        g_rich_found = True
-                        break
+            # Upstream region for G-rich 5-mer check
+            upstream_12_start = max(0, i - 12)
+            upstream_region = genome[upstream_12_start:i]
+
+            # Check for 5-mer with at least 3 G's
+            g_rich_found = False
+            for k in range(len(upstream_region) - 4):  # 5-mer sliding window
+                five_mer = upstream_region[k:k+5]
+                if five_mer.count("G") >= 3:
+                    g_rich_found = True
+                    break
 
                 if not g_rich_found:
                     break  # Skip this ORF, go to next start codon
-
+                
+            if stop_codon in stop_codons:
+                # Found stop codon; extract ORF
+                orf = genome[i:j+3]
                 # Passed G-rich test, continue
                 upstream_40_start = max(0, i - 40)
                 upstream_seq = genome[upstream_40_start:i]
