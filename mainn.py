@@ -3,7 +3,7 @@ from time import perf_counter
 t1_start = perf_counter()
 
 with open("NZ_CP097882.1[1..499457].fa", "r") as gfg_file:
-    genome = gfg_file.read()
+    genome = gfg_file.read().replace("\n","")
 
 start_codons = "ATG", "GTG", "TTG", "CTG"
 stop_codons = "TAA", "TAG", "TGA"
@@ -12,25 +12,24 @@ i = 0
 while i < len(genome) - 3:
     codon = genome[i:i+3]
     if codon in start_codons:
+        # Upstream region for G-rich 5-mer check
+        upstream_12_start = max(0, i - 12)
+        upstream_region = genome[upstream_12_start:i]
+
+        # Check for 5-mer with at least 3 G's
+        g_rich_found = False
+        for k in range(len(upstream_region) - 4):  # 5-mer sliding window
+            five_mer = upstream_region[k:k+5]
+            if five_mer.count("G") >= 3:
+                g_rich_found = True
+                break
+
+            if not g_rich_found:
+                continue  # Skip this ORF, go to next start codon
         j = i + 3
         while j < len(genome) - 3:
             stop_codon = genome[j:j+3]
 
-            # Upstream region for G-rich 5-mer check
-            upstream_12_start = max(0, i - 12)
-            upstream_region = genome[upstream_12_start:i]
-
-            # Check for 5-mer with at least 3 G's
-            g_rich_found = False
-            for k in range(len(upstream_region) - 4):  # 5-mer sliding window
-                five_mer = upstream_region[k:k+5]
-                if five_mer.count("G") >= 3:
-                    g_rich_found = True
-                    break
-
-                if not g_rich_found:
-                    break  # Skip this ORF, go to next start codon
-                
             if stop_codon in stop_codons:
                 # Found stop codon; extract ORF
                 orf = genome[i:j+3]
@@ -48,6 +47,7 @@ while i < len(genome) - 3:
 
                 print(f"\nORF found from {i} to {j+3}")
                 print(f"Start codon: {codon}, Stop codon: {stop_codon}")
+                print(f"G-rich region: {upstream_region}")
                 print(f"Protein Sequence found: {orf}")
                 print(f"Upstream (40 nt): {upstream_seq}")
                 print(f"Base counts: {base_counts}")
