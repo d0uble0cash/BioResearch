@@ -5,7 +5,7 @@ t1_start = perf_counter()
 with open("NZ_CP097882.1[1..499457].fa", "r") as gfg_file:
     genome = gfg_file.read().replace("\n","")
 
-start_codons = "ATG", "GTG", "TTG", "CTG"
+start_codons = "ATG", "GTG", "TTG"
 stop_codons = "TAA", "TAG", "TGA"
 protein_found = 0
 i = 0
