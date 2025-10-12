@@ -20,14 +20,15 @@ while i < len(genome) - 3:
         g_rich_found = False
         for k in range(len(upstream_region) - 4):  # 5-mer sliding window
             five_mer = upstream_region[k:k+5]
-            if five_mer.count("G") >= 3:
+            if five_mer.count("G") >= 2 and five_mer.count("A") >= 1:
                 g_rich_found = True
                 break
 
-            if not g_rich_found:
-                continue  # Skip this ORF, go to next start codon
+        if not g_rich_found:
+            i +=3
+            continue  # Skip this ORF, go to next start codon
         j = i + 3
-        while j < len(genome) - 3:
+        while j + 3 <= len(genome):
             stop_codon = genome[j:j+3]
 
             if stop_codon in stop_codons:
