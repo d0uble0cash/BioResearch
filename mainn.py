@@ -24,8 +24,8 @@ while i < len(genome) - 3:
                 g_rich_found = True
                 break
 
-        if not g_rich_found:
-            i +=3
+        if not g_rich_found and not i == 0:
+            i +=1
             continue  # Skip this ORF, go to next start codon
         j = i + 3
         while j + 3 <= len(genome):
@@ -54,9 +54,9 @@ while i < len(genome) - 3:
                 print(f"Base counts: {base_counts}")
                 break  # Stop at first stop codon
             j += 3
-        i = j  # Move past this ORF
+        i = j - 2  # Move past this ORF
     else:
-        i += 3
+        i += 1
 
 print(f"\nNumber of Proteins found: {protein_found}")
 
