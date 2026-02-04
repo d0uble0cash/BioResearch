@@ -3,6 +3,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from collections import Counter
 from os import path
+
 # Input files (your filenames)
 genbank_file = "NZ_CP097882.1[1..506252].flat"
 fasta_file = "NZ_CP097882.1[1..4675188].fa"
