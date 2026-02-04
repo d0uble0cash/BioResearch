@@ -13,23 +13,24 @@ output_file2 = f"{path.splitext(fasta_file)[-2]}_upstream.fa"
 genome_record = SeqIO.read(fasta_file, "fasta")
 genome_seq = genome_record.seq
 
+def get_cds(feature):
+    return int(feature.location.start), int(feature.location.end), feature.location.strand
+
+def get_qualifiers(feature):
+    return (feature.qualifiers.get("gene", ["unknown"])[0],
+        feature.qualifiers.get("product", ["unknown product"])[0],
+        feature.qualifiers.get("protein_id", ["no protein_id"])[0])
+
 # Open output file for writing
 with open(output_file1, "w") as out_handle:
     # Parse GenBank file for features
     for record in SeqIO.parse(genbank_file, "genbank"):
         for feature in record.features:
             if feature.type == "CDS":
-                qualifiers = feature.qualifiers
-
-                # Extract metadata with fallback defaults
-                gene = qualifiers.get("gene", ["unknown"])[0]
-                product = qualifiers.get("product", ["unknown product"])[0]
-                protein_id = qualifiers.get("protein_id", ["no protein_id"])[0]
+                gene, product, protein_id = get_qualifiers(feature)
 
                 # Get start, end, and strand of CDS
-                start = int(feature.location.start)
-                end = int(feature.location.end)
-                strand = feature.location.strand  # 1 or -1
+                start, end, strand = get_cds(feature)
 
                 # Extract CDS sequence, reverse complement if on minus strand
                 cds_seq = genome_seq[start:end]
@@ -84,9 +85,7 @@ with open(output_file2, "w") as f:
                 protein_id = qualifiers.get("protein_id", ["no protein_id"])[0]
 
                 # Get start, end, and strand of CDS
-                start = int(feature.location.start)
-                end = int(feature.location.end)
-                strand = feature.location.strand  # 1 or -1
+                start, end, strand = get_cds(feature)
 
                 # Extract upstream 80 bp sequence (strand-aware)
                 if strand == 1:
