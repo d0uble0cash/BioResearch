@@ -13,6 +13,9 @@ output_file2 = f"{path.splitext(fasta_file)[-2]}_upstream.fa"
 genome_record = SeqIO.read(fasta_file, "fasta")
 genome_seq = genome_record.seq
 
+upstream_count1 = int(input("Enter desired count1: "))
+upstream_count2 = int(input("Enter desired count2: "))
+
 def get_cds(feature):
     return int(feature.location.start), int(feature.location.end), feature.location.strand
 
@@ -43,21 +46,21 @@ with open(output_file1, "w") as out_handle:
 
                 # Extract upstream 80 bp sequence (strand-aware)
                 if strand == 1:
-                    upstream_start80 = max(0, start - 80)
-                    upstream_seq80 = genome_seq[upstream_start80:start]
-                    upstream_start40 = max(0, start - 40)
-                    upstream_seq40 = genome_seq[upstream_start40:start]
+                    upstream_start1 = max(0, start - upstream_count1)
+                    upstream_seq1 = genome_seq[upstream_start1:start]
+                    upstream_start2 = max(0, start - upstream_count2)
+                    upstream_seq2 = genome_seq[upstream_start2:start]
                 else:
-                    upstream_end80 = min(len(genome_seq), end + 80)
-                    upstream_seq80 = genome_seq[end:upstream_end80].reverse_complement()
-                    upstream_end40 = min(len(genome_seq), end + 40)
-                    upstream_seq40 = genome_seq[end:upstream_end40].reverse_complement()
+                    upstream_end1 = min(len(genome_seq), end + upstream_count1)
+                    upstream_seq1 = genome_seq[end:upstream_end1].reverse_complement()
+                    upstream_end2 = min(len(genome_seq), end + upstream_count2)
+                    upstream_seq2 = genome_seq[end:upstream_end2].reverse_complement()
 
                 # Count bases in upstream sequence
-                base_counts80 = Counter(str(upstream_seq80).upper())
-                base_counts_complete80 = {base: base_counts80.get(base, 0) for base in ['A', 'T', 'G', 'C']}
-                base_counts40 = Counter(str(upstream_seq40).upper())
-                base_counts_complete40 = {base: base_counts40.get(base, 0) for base in ['A', 'T', 'G', 'C']}
+                base_counts1 = Counter(str(upstream_seq1).upper())
+                base_counts_complete1 = {base: base_counts1.get(base, 0) for base in ['A', 'T', 'G', 'C']}
+                base_counts2 = Counter(str(upstream_seq2).upper())
+                base_counts_complete2 = {base: base_counts2.get(base, 0) for base in ['A', 'T', 'G', 'C']}
 
                 # Write info to output file
                 out_handle.write(f"Gene: {gene}\n")
@@ -67,10 +70,10 @@ with open(output_file1, "w") as out_handle:
                 out_handle.write(f"CDS Range: {start} to {end}\n")
                 out_handle.write(f"Start codon: {start_codon}, Stop codon: {stop_codon}\n")
                 out_handle.write(f"CDS DNA Sequence:\n{cds_seq}\n")
-                out_handle.write(f"Upstream 80 bp:\n{upstream_seq80}\n")
-                out_handle.write(f"Base counts: {base_counts_complete80}\n")
-                out_handle.write(f"Upstream 40 bp:\n{upstream_seq40}\n")
-                out_handle.write(f"Base counts: {base_counts_complete40}\n")
+                out_handle.write(f"Upstream {upstream_count1} bp:\n{upstream_seq1}\n")
+                out_handle.write(f"Base counts: {base_counts_complete1}\n")
+                out_handle.write(f"Upstream {upstream_count2} bp:\n{upstream_seq2}\n")
+                out_handle.write(f"Base counts: {base_counts_complete2}\n")
                 out_handle.write("-" * 60 + "\n")
 with open(output_file2, "w") as f:
     # Parse GenBank file for features
@@ -87,29 +90,29 @@ with open(output_file2, "w") as f:
                 # Get start, end, and strand of CDS
                 start, end, strand = get_cds(feature)
 
-                # Extract upstream 80 bp sequence (strand-aware)
+                # Extract upstream upstream_count1 bp sequence (strand-aware)
                 if strand == 1:
-                    upstream_start80 = max(0, start - 80)
-                    upstream_seq80 = genome_seq[upstream_start80:start]
-                    upstream_start40 = max(0, start - 40)
-                    upstream_seq40 = genome_seq[upstream_start40:start]
+                    upstream_start1 = max(0, start - upstream_count1)
+                    upstream_seq1 = genome_seq[upstream_start1:start]
+                    upstream_start2 = max(0, start - upstream_count2)
+                    upstream_seq2 = genome_seq[upstream_start2:start]
                 else:
-                    upstream_end80 = min(len(genome_seq), end + 80)
-                    upstream_seq80 = genome_seq[end:upstream_end80].reverse_complement()
-                    upstream_end40 = min(len(genome_seq), end + 40)
-                    upstream_seq40 = genome_seq[end:upstream_end40].reverse_complement()
+                    upstream_end1 = min(len(genome_seq), end + upstream_count1)
+                    upstream_seq1 = genome_seq[end:upstream_end1].reverse_complement()
+                    upstream_end2 = min(len(genome_seq), end + upstream_count2)
+                    upstream_seq2 = genome_seq[end:upstream_end2].reverse_complement()
 
                 # Count bases in upstream sequence
-                base_counts80 = Counter(str(upstream_seq80).upper())
-                base_counts_complete80 = {base: base_counts80.get(base, 0) for base in ['A', 'T', 'G', 'C']}
-                base_counts40 = Counter(str(upstream_seq40).upper())
-                base_counts_complete40 = {base: base_counts40.get(base, 0) for base in ['A', 'T', 'G', 'C']}
+                base_counts1 = Counter(str(upstream_seq1).upper())
+                base_counts_complete1 = {base: base_counts1.get(base, 0) for base in ['A', 'T', 'G', 'C']}
+                base_counts2 = Counter(str(upstream_seq2).upper())
+                base_counts_complete2 = {base: base_counts2.get(base, 0) for base in ['A', 'T', 'G', 'C']}
     
                 f.write(f"Gene: {gene}\n")
-                f.write(f"Upstream 80 bp:\n{upstream_seq80}\n")
-                f.write(f"Base counts: {base_counts_complete80}\n")
-                f.write(f"Upstream 40 bp:\n{upstream_seq40}\n")
-                f.write(f"Base counts: {base_counts_complete40}\n")
+                f.write(f"Upstream {upstream_count1} bp:\n{upstream_seq1}\n")
+                f.write(f"Base counts: {base_counts_complete1}\n")
+                f.write(f"Upstream {upstream_count2} bp:\n{upstream_seq2}\n")
+                f.write(f"Base counts: {base_counts_complete2}\n")
                 f.write(f"-" * 60 + "\n")
 
 
