@@ -2,12 +2,12 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from collections import Counter
-
+from os import path
 # Input files (your filenames)
 genbank_file = "NZ_CP097882.1[1..506252].flat"
 fasta_file = "NZ_CP097882.1[1..4675188].fa"
-output_file1 = "protein_info.txt"
-output_file2 = "Gene_Name_Upstream8040.fa"
+output_file1 = f"{path.splitext(fasta_file)[-2]}_protein_info.txt"
+output_file2 = f"{path.splitext(fasta_file)[-2]}_upstream.fa"
 
 # Load genome sequence from FASTA file
 genome_record = SeqIO.read(fasta_file, "fasta")
@@ -71,7 +71,7 @@ with open(output_file1, "w") as out_handle:
                 out_handle.write(f"Upstream 40 bp:\n{upstream_seq40}\n")
                 out_handle.write(f"Base counts: {base_counts_complete40}\n")
                 out_handle.write("-" * 60 + "\n")
-with open("Gene_Name_Upstream8040.fa", "w") as f:
+with open(output_file2, "w") as f:
     # Parse GenBank file for features
     for record in SeqIO.parse(genbank_file, "genbank"):
         for feature in record.features:
