@@ -7,15 +7,16 @@ from os import path
 # Input files (your filenames)
 genbank_file = "NZ_CP097882.1[1..506252].flat"
 fasta_file = "NZ_CP097882.1[1..4675188].fa"
-output_file1 = f"{path.splitext(fasta_file)[-2]}_protein_info.txt"
-output_file2 = f"{path.splitext(fasta_file)[-2]}_upstream.fa"
 
 # Load genome sequence from FASTA file
 genome_record = SeqIO.read(fasta_file, "fasta")
 genome_seq = genome_record.seq
 
-upstream_count1 = int(input("Enter desired count1: "))
-upstream_count2 = int(input("Enter desired count2: "))
+upstream_count1 = int(input("Enter desired count 1: "))
+upstream_count2 = int(input("Enter desired count 2: "))
+
+output_file1 = f"{path.splitext(fasta_file)[-2]}_{upstream_count1}_{upstream_count2}_protein_info.txt"
+output_file2 = f"{path.splitext(fasta_file)[-2]}_{upstream_count1}_{upstream_count2}_upstream.fa"
 
 def get_cds(feature):
     return int(feature.location.start), int(feature.location.end), feature.location.strand
